@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { GROUP_COLLECTION } from '@storage/storageConfig'
+import { PLAYER_COLLECTION, GROUP_COLLECTION } from '@storage/storageConfig'
 import { AppError } from '@utils/AppError'
 
 const getAllGroups = async () => {
@@ -29,4 +29,15 @@ const createGroup = async (name: string) => {
   }
 }
 
-export { createGroup, getAllGroups }
+const removeGroupByName = async (groupName: string) => {
+  try {
+    const storageGroups = await getAllGroups()
+    const groups = storageGroups.filter((group: string) => group !== groupName)
+    await AsyncStorage.setItem(GROUP_COLLECTION, JSON.stringify(groups))
+    await AsyncStorage.removeItem(`${PLAYER_COLLECTION}-${groupName}`)
+  } catch (error) {
+    throw error
+  }
+}
+
+export { createGroup, getAllGroups, removeGroupByName }
